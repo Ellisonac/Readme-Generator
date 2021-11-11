@@ -1,0 +1,25 @@
+{
+  "name": "readme-generator",
+  "version": "1.0.0",
+  "description": "This application uses inquirer to enable quick setup of a README file from a template",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrew Ellison",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^6.5.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ellisonac/Readme-Generator.git"
+  },
+  "keywords": [
+    "generate"
+  ],
+  "bugs": {
+    "url": "https://github.com/Ellisonac/Readme-Generator/issues"
+  },
+  "homepage": "https://github.com/Ellisonac/Readme-Generator#readme"
+}
