@@ -90,12 +90,10 @@ function writeToFile(fileName, data) {
 
   let readmeText = readmeTemplate(data);
 
-  // filename should be a valid README.md every time
-
+  // filename should be a valid README.md every time, no validation required
   fs.writeFile(fileName,readmeText,(err) => {
     console.log(err)
   })
-
 
 }
 
@@ -108,20 +106,22 @@ function readmeTemplate(data) {
 
 ${data.desc}
 
-${data.license!='None'?'[License Badge](https://img.shields.io/badge/License-${data.license}-informational?logoColor=white&color=1CA2F1)':''}
+${data.license!='None'?`![License Badge](https://img.shields.io/badge/License-${data.license}-informational?logoColor=white&color=1CA2F1)`:''}
 
 ## Table of Contents
 
 ${generateToc(data)}
-${optionalBlock('Installation',data.install)}${optionalBlock('Usage',(data.detailUsage)?renderCode(data.detailUsage):data.usage)}${optionalBlock('Contributing',data.contribute)}${optionalBlock('Tests',(data.detailTest)?renderCode(data.detailTest):data.test)}
+${optionalBlock('Installation',data.install)}${optionalBlock('How to Use',(data.detailUsage)?renderCode(data.detailUsage):data.usage)}${optionalBlock('How to Contribute',data.contribute)}${optionalBlock('Tests',(data.detailTest)?renderCode(data.detailTest):data.test)}
 
 ${(data.github || data.email)?'## Questions\n':''}
-${(data.github)?`Find my other projects at: [${data.github}](${data.github})\n`:''}
+${(data.github)?`Find my other projects at: [${data.github}](https://github.com/${data.github})\n`:''}
 ${(data.email)?`Contact me at: ${data.email}`:''}
 
-## License \t![License Badge](https://img.shields.io/badge/License-${data.license}-informational?logoColor=white&color=1CA2F1)
+${data.license!='None'?`## License \n${data.license!='None'?`![License Badge](https://img.shields.io/badge/License-${data.license}-informational?logoColor=white&color=1CA2F1)`:''}
 
-${licenses.lic[data.license]}
+This project is covered under the following license:
+
+${licenses.lic[data.license]}`:''}
 
 `;
 
@@ -151,21 +151,24 @@ ${text}
 // Code function assumes code will be written in javascript
 function renderCode(code) {
 
-const re = /{{([^}]+)}}/g;
+// Match text within double braces, allowing for single brace groups
+const re = /{{(([^}][^}]?|[^}]}?)*)}}/g;
 let matches = code.match(re);
-
-console.log(matches)
 let newText = code.split(re);
-console.log(newText)
 
+// Remove erroneous '\n' elements created by regex split
+newText = newText.filter((el) => {
+  return !(el==='\n')
+})
+
+// Change code blocks into README code style
 if (matches) {
   for (const [index,match] of matches.entries()) {
     let matchText = match.replace(/{{/ , '```javascript\n')
     matchText = matchText.replace(/}}/ , '\n```\n')
 
     newText[(index*2)+1] = matchText
-
-    console.log(match)
+    console.log(newText.length)
   }
 }
 
@@ -176,7 +179,7 @@ return newText.join('\n')
 // Condensed template for Table of Contents that handles spacing and logic
 // Generate only valid sections in the table of contents
 function generateToc(data) {
-  return `${data.install?'- [Installation](#Installation)\n':''}${data.usage?'- [Usage](#Usage)\n':''}${data.contribute?'- [Contributing](#Contributing)\n':''}${data.tests || data.detailTest?'- [Tests](#Tests)\n':''}${data.github || data.email?'- [Questions](#Questions)\n':''}${data.license?'- [License](#License)\n':''}`
+  return `${data.install?'- [Installation](#installation)\n':''}${data.usage?'- [How to Use](#how-to-use)\n':''}${data.contribute?'- [How to Contribute](#how-to-contribute)\n':''}${data.tests || data.detailTest?'- [Tests](#testing)\n':''}${data.github || data.email?'- [Questions](#questions)\n':''}${data.license?'- [License](#license)\n':''}`
 }
 
 // Initialization function when called by Node

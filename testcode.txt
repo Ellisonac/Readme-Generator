@@ -1,12 +1,17 @@
-Use it like this
+To prime the turbo encabulator, run the following:
 
 {{
-  'Example code'
-  console.log('Hello world')
+  let flux = 'Capacitive Diractance';
+  let status = encabulate(flux,'fumble')
+  console.log(status) #expect 'primed'
 }}
 
-and then
+Then, to instantiate a magneto bearing run the following:
 
 {{
-  'Raaaaaaa'
+  let options = {
+    meter: 'reciprocal',
+    flux
+  }
+  let bearing = new Magneto(options);
 }}
