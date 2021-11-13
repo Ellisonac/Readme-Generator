@@ -1,0 +1,12 @@
+Use it like this
+
+{{
+  'Example code'
+  console.log('Hello world')
+}}
+
+and then
+
+{{
+  'Raaaaaaa'
+}}

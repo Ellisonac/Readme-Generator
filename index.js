@@ -42,37 +42,38 @@ const questions = [
     type: 'input',
     message: 'How is this project installed?',
     name: 'install',
-    default: 'Installation instructions.'
+    default: ''
   },
   {
     type: 'input',
     message: 'How is this project used? (respond "code" to enter detailed instructions)',
     name: 'usage',
-    default: 'Usage Instructions.'
+    default: ''
   },
   {
     type: 'editor',
-    message: "Input detailed usage instructions. Surround code snippets with ''' triple quotes.",
+    message: "Input detailed usage instructions. Surround code snippets with {{ }}.",
     name: 'detailUsage',
+    default: '',
     when: (answers) => answers.usage === 'code'
   },
   {
     type: 'input',
     message: 'How is this project tested? (respond "code" to enter detailed tests)',
     name: 'test',
-    default: 'Testing Instructions.'
+    default: ''
   },
   {
     type: 'editor',
-    message: "Input detailed tests. Surround code snippets with ''' triple quotes.",
+    message: "Input detailed tests. Surround code snippets with {{ }}.",
     name: 'detailTest',
-    when: (answers) => answers.usage === 'code'
+    when: (answers) => answers.test === 'code'
   },
   {
     type: 'input',
     message: 'How to contribute?',
     name: 'contribute',
-    default: 'Contribution Instructions.',
+    default: '',
   },
   {
     type: 'list',
@@ -107,54 +108,78 @@ function readmeTemplate(data) {
 
 ${data.desc}
 
+${data.license!='None'?'[License Badge](https://img.shields.io/badge/License-${data.license}-informational?logoColor=white&color=1CA2F1)':''}
+
 ## Table of Contents
 
-[Installation](#Installation)  
-[Usage](#Usage)  
-[Contributing](#Contributing)  
-[Tests](#Tests)  
-[Questions](#Questions) 
-[License](#License) 
+${generateToc(data)}
+${optionalBlock('Installation',data.install)}${optionalBlock('Usage',(data.detailUsage)?renderCode(data.detailUsage):data.usage)}${optionalBlock('Contributing',data.contribute)}${optionalBlock('Tests',(data.detailTest)?renderCode(data.detailTest):data.test)}
 
-
-## Installation
-
-${data.install}
-
-## Usage
-
-${(data.detailUsage)?data.detailUsage:data.usage}
-
-## Contributing
-
-${data.contribute}
-
-## Tests
-
-${(data.detailTest)?data.detailTest:data.test}
-
-## Questions
-
-${(data.github)?`Find my other projects at: [${data.github}](${data.github})`:''}
-Find my other projects at: [${data.github}](${data.github})
+${(data.github || data.email)?'## Questions\n':''}
+${(data.github)?`Find my other projects at: [${data.github}](${data.github})\n`:''}
 ${(data.email)?`Contact me at: ${data.email}`:''}
 
-## License   ![License Badge](https://img.shields.io/badge/License-${data.license}-informational?logoColor=white&color=1CA2F1)
+## License \t![License Badge](https://img.shields.io/badge/License-${data.license}-informational?logoColor=white&color=1CA2F1)
 
 ${licenses.lic[data.license]}
-
-
 
 `;
 
   return readmeText
 
+}
+
+// Helper function to render optional blocks only if response provided.
+function optionalBlock(title,text) {
+
+  if (text === '') {
+    return ''
+  } else {
+    blockText = 
+`
+## ${title}
+
+${text}
+
+`
+    return blockText
+  }
+  
+}
+
+// Helper function to render input code blocks to readme syntax
+// Code function assumes code will be written in javascript
+function renderCode(code) {
+
+const re = /{{([^}]+)}}/g;
+let matches = code.match(re);
+
+console.log(matches)
+let newText = code.split(re);
+console.log(newText)
+
+if (matches) {
+  for (const [index,match] of matches.entries()) {
+    let matchText = match.replace(/{{/ , '```javascript\n')
+    matchText = matchText.replace(/}}/ , '\n```\n')
+
+    newText[(index*2)+1] = matchText
+
+    console.log(match)
+  }
+}
+
+return newText.join('\n')
 
 }
 
+// Condensed template for Table of Contents that handles spacing and logic
+// Generate only valid sections in the table of contents
+function generateToc(data) {
+  return `${data.install?'- [Installation](#Installation)\n':''}${data.usage?'- [Usage](#Usage)\n':''}${data.contribute?'- [Contributing](#Contributing)\n':''}${data.tests || data.detailTest?'- [Tests](#Tests)\n':''}${data.github || data.email?'- [Questions](#Questions)\n':''}${data.license?'- [License](#License)\n':''}`
+}
 
-
-// TODO: Create a function to initialize app
+// Initialization function when called by Node
 function init() {
 
   inquirer.prompt(questions)
