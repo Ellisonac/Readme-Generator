@@ -87,6 +87,8 @@ the screenshot links added after creation.
 ? Choose a License: MIT
 ```
 
+Another sample generated README.md fil is included as GeneratedREADME.md
+
 See a recording of the session in:
 ![Screen Recording of Console Usage](walkthrough.gif)
 
