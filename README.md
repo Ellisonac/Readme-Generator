@@ -90,7 +90,7 @@ the screenshot links added after creation.
 Another sample generated README.md fil is included as GeneratedREADME.md
 
 See a recording of the session in:
-![Screen Recording of Console Usage](walkthrough.gif)
+[README Generator Walk Through](https://watch.screencastify.com/v/LYXVRcM7XT7VoCRKBIab)
 
 ## License 
 ![License Badge](https://img.shields.io/badge/License-MIT-informational?logoColor=white&color=1CA2F1)
